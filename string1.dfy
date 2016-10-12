@@ -19,27 +19,11 @@ method isPrefix(pre: string, str: string) returns (res: bool)
 
 method isSubstring(sub: string, str: string) returns (res: bool)
 {
-	if (|sub| == 0)
-	{
-		// Empty string is a substring of every string
-		return true;
-	}
-	
-	if (|str| < |sub|)
-	{
-		return false;
-	}
-
 	var i := 0;
 	while (i < |str|)
 	{
-		if (|str[i..]| < |sub|)
-		{
-			return false;
-		}
-
-		var index := (i + |sub|) - 1;
-		if (str[i..index] == sub)
+		var prefix := isPrefix(sub, str[i..]);
+		if (prefix)
 		{
 			return true;
 		}
