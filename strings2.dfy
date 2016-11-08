@@ -6,7 +6,11 @@ predicate isPrefixPred(pre:string, str:string)
 predicate isNotPrefixPred(pre:string, str:string)
 {
 	// TODO: your formula should not contain &&
-	(|pre| > 0) && ((|pre| > |str|) || pre != str[..|pre| - 1])
+	//(|pre| > 0) && ((|pre| > |str|) || pre != str[..|pre| - 1]) 
+	//coverted to disjunctive normal form
+
+	!((|pre| <= 0) || (|pre| <= |str|)) || !((|pre| <= 0) || (pre == str[..|pre| -1]))
+
 }
 
 // Sanity check: Dafny should be able to automatically prove the following lemma
@@ -44,7 +48,7 @@ predicate haveCommonKSubstringPred(k:nat, str1:string, str2:string)
 predicate haveNotCommonKSubstringPred(k:nat, str1:string, str2:string)
 {
 	//TODO: your FOL formula should start with a forall
-	forall x :: ( isSubstringPred(x, str1) && |x| == k ==> isNotSubstringPred(x, str2))
+	k > 0 && forall x :: ( isSubstringPred(x, str1) && |x| == k ==> isNotSubstringPred(x, str2))
 }
 
 // Sanity check: Dafny should be able to automatically prove the following lemma
