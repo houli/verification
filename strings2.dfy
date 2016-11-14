@@ -41,9 +41,9 @@ predicate haveCommonKSubstringPred(k: nat, str1: string, str2: string)
 	k == 0 || exists x :: (isSubstringPred(x, str1) && |x| == k && isSubstringPred(x, str2))
 }
 
-predicate haveNotCommonKSubstringPred(k:nat, str1:string, str2:string)
+predicate haveNotCommonKSubstringPred(k: nat, str1: string, str2: string)
 {
-	 k > 0 && forall x :: (isSubstringPred(x, str1) && |x| == k ==> isNotSubstringPred(x, str2))
+	(forall x :: (isSubstringPred(x, str1) && |x| == k ==> isNotSubstringPred(x, str2))) && k > 0
 }
 
 // Sanity check: Dafny should be able to automatically prove the following lemma
