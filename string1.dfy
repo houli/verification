@@ -14,7 +14,7 @@ method isPrefix(pre: string, str: string) returns (res: bool)
 		return false;
 	}
 
-	return str[..|pre| - 1] == pre;
+	return str[..|pre|] == pre;
 }
 
 method isSubstring(sub: string, str: string) returns (res: bool)
@@ -48,7 +48,7 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 			return false;
 		}
 
-		var index := (i + k) - 1;
+		var index := i + k;
 		var found := isSubstring(str1[i..index], str2);
 		if (found)
 		{
