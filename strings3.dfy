@@ -58,19 +58,15 @@ method isSubstring(sub: string, str: string) returns (res:bool)
 	var i := 0;
 	while (i <= |str| && !res)
 		invariant 0 <= i <= |str| + 1
-		invariant res ==> isSubstringPred(sub, str)
-		invariant !res ==> (forall j :: (0 <= j < i ==> isNotPrefixPred(sub, str[j..])))
-		decreases |str| - i + (if res then 0 else 1)
+		//invariant res ==> isSubstringPred(sub, str)
+		invariant !res <==> (forall j :: (0 <= j < i ==> isNotPrefixPred(sub, str[j..])))
+		decreases |str| - i
 	{
 		var prefix := isPrefix(sub, str[i..]);
-		if (prefix)
-		{
+		if (prefix) {
 			res := true;
 		}
-		else
-		{
-			i := i + 1;
-		}
+		i := i + 1;
 	}
 	return res;
 }
@@ -91,9 +87,28 @@ lemma commonKSubstringLemma(k:nat, str1:string, str2:string)
 {}
 
 method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: bool)
-	ensures found  <==>  haveCommonKSubstringPred(k,str1,str2)
-	//ensures !found <==> haveNotCommonKSubstringPred(k,str1,str2) // This postcondition follows from the above lemma.
+	ensures found  <==>  haveCommonKSubstringPred(k, str1, str2)
+	ensures !found <==> haveNotCommonKSubstringPred(k,str1,str2) // This postcondition follows from the above lemma.
 {
+	if (|str1| < k) {
+		return false;
+	}
+	found := false;
+	var i := 0;
+	while (i <= |str1| - k && !found)
+		invariant |str1| >= k ==> 0 <= i <= |str1| - k + 1
+		//invariant found ==> haveCommonKSubstringPred(k, str1, str2)
+		invariant !found <==> forall j, j1 :: (0 <= j < i && j1 == j + k ==> isNotSubstringPred(str1[j..j1], str2))
+		decreases |str1| - i
+	{
+		var index := i + k;
+		var substring := isSubstring(str1[i..index], str2);
+		if (substring) {
+			found := true;
+		}
+		i := i + 1;
+	}
+	return found;
 }
 
 method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
@@ -101,7 +116,6 @@ method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
 	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
 	ensures haveCommonKSubstringPred(len,str1,str2)
 {
-	assert isPrefixPred(str1[0..0],str2[0..]);
 }
 
 
