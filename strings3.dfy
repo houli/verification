@@ -111,11 +111,26 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 	return found;
 }
 
-method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
+method maxCommonSubstringLength(str1: string, str2: string) returns (len: nat)
 	requires (|str1| <= |str2|)
-	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
-	ensures haveCommonKSubstringPred(len,str1,str2)
+	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k, str1, str2))
+	ensures haveCommonKSubstringPred(len, str1, str2)
 {
+	len := |str1|;
+
+	while (len > 0)
+		invariant forall k :: (len < k <= |str1| ==> !haveCommonKSubstringPred(k, str1, str2))
+		decreases len
+	{
+		var found := haveCommonKSubstring(len, str1, str2);
+		if (found) {
+			return len;
+		}
+		len := len - 1;
+	}
+	// Hint from the email
+	assert isPrefixPred(str1[0..0], str2[0..]);
+	return len;
 }
 
 
